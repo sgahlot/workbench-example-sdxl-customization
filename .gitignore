@@ -4,9 +4,9 @@
 !.project/configpacks
 
 # Ignore directories used to generate output images
-data/tuned-charles-3
-data/tuned-my-data
-data/tuned-toy-jensen
+models/tuned-charles-3
+models/tuned-my-data
+models/tuned-toy-jensen
 
 # temp cloned directory
 code/diffusers
