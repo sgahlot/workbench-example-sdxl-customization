@@ -3,6 +3,17 @@
 !.project/spec.yaml
 !.project/configpacks
 
+# Ignore directories used to generate output images
+data/tuned-charles-3
+data/tuned-my-data
+data/tuned-toy-jensen
+
+# temp cloned directory
+code/diffusers
+
+# virtual env
+code/nvidia-usecase
+
 # General ignores
 .DS_Store
 __pycache__/
