@@ -3,6 +3,8 @@
 !.project/spec.yaml
 !.project/configpacks
 
+.env
+
 # Ignore directories used to generate output images
 models/tuned-charles-3
 models/tuned-my-data
