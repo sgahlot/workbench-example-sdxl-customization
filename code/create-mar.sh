@@ -2,7 +2,7 @@
 
 REPO_ROOT_DIR=$1          # "/opt/app-root/src/demo/sgahlot-nvidia-usecase"
 MODELS_DIR="$REPO_ROOT_DIR/models/tuned-toy-jensen"
-SAVED_MODEL_DIR="$MODELS_DIR/model"
+# SAVED_MODEL_DIR="$MODELS_DIR/model"
 MODEL_ZIP_FILE_NAME="model.zip"
 MAR_MODEL_NAME="stable-diffusion"
 WORKLOADS_REPO_DIR="workloads/examples/stable-diffusion-dreambooth/notebook/model"
@@ -10,11 +10,11 @@ WORKLOADS_REPO_DIR="workloads/examples/stable-diffusion-dreambooth/notebook/mode
 printf "REPO_ROOT_DIR=%s\n" $REPO_ROOT_DIR
 
 # Create zip file containing the model directory
-cd $SAVED_MODEL_DIR
+cd $MODELS_DIR
 printf "In the SAVED_MODEL_DIR - PWD=%s. Creating [%s] containing model dir\n" `pwd` $MODEL_ZIP_FILE_NAME
-zip -r ../$MODEL_ZIP_FILE_NAME *
+zip -r $MODEL_ZIP_FILE_NAME model/*
 
-cd ..
+# cd ..
 printf "In the MODELS_DIR - PWD=%s\n" `pwd`
 mkdir -p gen-mar/archive/config
 cd gen-mar
