@@ -2,7 +2,7 @@
 
 REPO_ROOT_DIR=$1          # "/opt/app-root/src/demo/sgahlot-nvidia-usecase"
 MODELS_DIR="$REPO_ROOT_DIR/models/tuned-toy-jensen"
-# SAVED_MODEL_DIR="$MODELS_DIR/model"
+SAVED_MODEL_DIR="$MODELS_DIR/model"
 MODEL_ZIP_FILE_NAME="model.zip"
 MAR_MODEL_NAME="stable-diffusion"
 WORKLOADS_REPO_DIR="workloads/examples/stable-diffusion-dreambooth/notebook/model"
@@ -10,13 +10,14 @@ WORKLOADS_REPO_DIR="workloads/examples/stable-diffusion-dreambooth/notebook/mode
 printf "REPO_ROOT_DIR=%s\n" $REPO_ROOT_DIR
 
 # Create zip file containing the model directory
-cd $MODELS_DIR
+cd $SAVED_MODEL_DIR
 printf "In the SAVED_MODEL_DIR - PWD=%s. Creating [%s] containing model dir\n" `pwd` $MODEL_ZIP_FILE_NAME
-zip -r $MODEL_ZIP_FILE_NAME model/*
+zip -r $MODEL_ZIP_FILE_NAME *
 
-# cd ..
+cd ..
 printf "In the MODELS_DIR - PWD=%s\n" `pwd`
 mkdir -p gen-mar/archive/config
+mkdir -p gen-mar/archive/model-store
 cd gen-mar
 
 printf "Moving ../%s in the gen-mar dir\n" $MODEL_ZIP_FILE_NAME
@@ -40,7 +41,7 @@ torch-model-archiver --model-name $MAR_MODEL_NAME \
     --extra-files ./$MODEL_ZIP_FILE_NAME \
     -f -r requirements.txt
 
-mv ${MAR_MODEL_NAME}.mar archive
+mv ${MAR_MODEL_NAME}.mar archive/model-store
 
 printf "In the gen-mar dir - PWD=%s. Files after running archiver:\n" `pwd`
 find archive -type f -exec ls -lh {} \;
