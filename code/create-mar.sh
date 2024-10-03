@@ -10,18 +10,15 @@ WORKLOADS_REPO_DIR="workloads/examples/stable-diffusion-dreambooth/notebook/mode
 printf "REPO_ROOT_DIR=%s\n" $REPO_ROOT_DIR
 
 # Create zip file containing the model directory
-cd $SAVED_MODEL_DIR
-printf "In the SAVED_MODEL_DIR - PWD=%s. Creating [%s] containing model dir\n" `pwd` $MODEL_ZIP_FILE_NAME
-zip -r $MODEL_ZIP_FILE_NAME *
-
-cd ..
-printf "In the MODELS_DIR - PWD=%s\n" `pwd`
+cd $MODELS_DIR
 mkdir -p gen-mar/archive/config
-mkdir -p gen-mar/archive/model-store
-cd gen-mar
+mkdir gen-mar/archive/model-store
 
-printf "Moving ../%s in the gen-mar dir\n" $MODEL_ZIP_FILE_NAME
-mv ../$MODEL_ZIP_FILE_NAME .
+cd $SAVED_MODEL_DIR
+printf "In the SAVED_MODEL_DIR - PWD=%s. Creating [%s] in (gen-mar dir) containing model dir\n" `pwd` $MODEL_ZIP_FILE_NAME
+zip -r ../gen-mar/$MODEL_ZIP_FILE_NAME *
+
+cd ../gen-mar
 
 # Clone distributed-downloads to copy config.properties and requirements.txt
 printf "Cloning opendatahub-io/distributed-workloads...\n"
