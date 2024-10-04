@@ -20,7 +20,7 @@ cd ../gen-mar
 printf "Copying config.properties, requirements.txt and stable_diffusion_handler...\n"
 cp ${CODE_MAR_DIR}/config.properties archive/config
 cp ${CODE_MAR_DIR}/requirements.txt .
-cp ${CODE_MAR_DIR}/stable_diffusion_handler .
+cp ${CODE_MAR_DIR}/stable_diffusion_handler.py .
 
 # Install and run torch-model-archiver
 printf "Installing torch-model-archiver"
