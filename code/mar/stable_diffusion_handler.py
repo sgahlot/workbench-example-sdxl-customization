@@ -42,11 +42,17 @@ class DiffusersHandler(BaseHandler, ABC):
         )
         # Loading the model and tokenizer from checkpoint and config files based on the user's choice of mode
         # further setup config can be added.
-        with zipfile.ZipFile(model_dir + "/model.zip", "r") as zip_ref:
-            zip_ref.extractall(model_dir + "/model")
+        # with zipfile.ZipFile(model_dir + "/model.zip", "r") as zip_ref:
+        #     zip_ref.extractall(model_dir + "/model")
 
-        logger.info(f"SG:: Trying to load model from [{model_dir}/model] directory...")
-        self.pipe = StableDiffusionXLPipeline.from_pretrained(model_dir + "/model")
+        # logger.info(f"SG:: Trying to load model from [{model_dir}/model] directory...")
+        # self.pipe = StableDiffusionXLPipeline.from_pretrained(model_dir + "/model")
+        model_id="stabilityai/stable-diffusion-xl-base-1.0"
+
+        logger.info(f"SG:: Using [{model_id}] as the pre-trained model for this demo")
+        self.pipe = StableDiffusionXLPipeline.from_pretrained(model_id, torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
+        logger.info(f"SG:: Loaded [{model_id}] for this demo")
+
         self.pipe.to(self.device)
         logger.info("Diffusion model from path %s loaded successfully", model_dir)
 
