@@ -6,7 +6,7 @@ from abc import ABC
 import diffusers
 import numpy as np
 import torch
-from diffusers import DiffusionPipeline
+from diffusers import StableDiffusionPipelineXL
 
 from ts.torch_handler.base_handler import BaseHandler
 
@@ -31,7 +31,9 @@ class DiffusersHandler(BaseHandler, ABC):
         """
         self.manifest = ctx.manifest
         properties = ctx.system_properties
+        logger.info("SG:: Reading 'model_dir' property...")
         model_dir = properties.get("model_dir")
+        logger.info(f"SG:: 'model_dir'=[{model_dir}]...")
 
         self.device = torch.device(
             "cuda:" + str(properties.get("gpu_id"))
@@ -43,7 +45,8 @@ class DiffusersHandler(BaseHandler, ABC):
         with zipfile.ZipFile(model_dir + "/model.zip", "r") as zip_ref:
             zip_ref.extractall(model_dir + "/model")
 
-        self.pipe = DiffusionPipeline.from_pretrained(model_dir + "/model")
+        logger.info(f"SG:: Trying to load model from [{model_dir}/model] directory...")
+        self.pipe = StableDiffusionPipelineXL.from_pretrained(model_dir + "/model")
         self.pipe.to(self.device)
         logger.info("Diffusion model from path %s loaded successfully", model_dir)
 
