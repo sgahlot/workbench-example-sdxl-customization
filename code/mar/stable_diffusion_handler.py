@@ -6,7 +6,7 @@ from abc import ABC
 import diffusers
 import numpy as np
 import torch
-from diffusers import StableDiffusionPipelineXL
+from diffusers import StableDiffusionXLPipeline
 
 from ts.torch_handler.base_handler import BaseHandler
 
@@ -46,7 +46,7 @@ class DiffusersHandler(BaseHandler, ABC):
             zip_ref.extractall(model_dir + "/model")
 
         logger.info(f"SG:: Trying to load model from [{model_dir}/model] directory...")
-        self.pipe = StableDiffusionPipelineXL.from_pretrained(model_dir + "/model")
+        self.pipe = StableDiffusionXLPipeline.from_pretrained(model_dir + "/model")
         self.pipe.to(self.device)
         logger.info("Diffusion model from path %s loaded successfully", model_dir)
 
