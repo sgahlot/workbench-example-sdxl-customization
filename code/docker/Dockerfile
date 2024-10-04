@@ -1,12 +1,11 @@
-FROM pytorch/torchserve:latest-gpu
+FROM pytorch/torchserve-kfs-nightly:latest-gpu
 
 USER root
 
-RUN chmod -R +rwx /home/model-server
-RUN chown -R 1000970123:1000970123 /home/model-server
+COPY TorchserveModel.py ./kserve_wrapper/TorchserveModel.py
 
-RUN mkdir /.cache
-RUN chown -R 1000970123:1000970123 /.cache
+RUN mkdir /.cache && \
+    chgrp -R 0 /home/model-server /.cache && \
+    chmod -R g=u /home/model-server /.cache
 
 USER model-server
-ENTRYPOINT ["/usr/local/bin/dockerd-entrypoint.sh"]

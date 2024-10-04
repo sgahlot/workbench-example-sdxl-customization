@@ -11,7 +11,7 @@ models/tuned-my-data
 models/tuned-toy-jensen
 
 # temp cloned directory
-code/diffusers
+repos
 
 # virtual env
 code/nvidia-usecase
