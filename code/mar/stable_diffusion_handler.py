@@ -34,6 +34,10 @@ class DiffusersHandler(BaseHandler, ABC):
         logger.info("SG:: Reading 'model_dir' property...")
         model_dir = properties.get("model_dir")
         logger.info(f"SG:: 'model_dir'=[{model_dir}]...")
+        model_store_dir = properties.get("model-store")
+        logger.info(f"SG:: 'model_store_dir'=[{model_store_dir}]...")
+        saved_model_store_dir = properties.get("SAVED_MODELS_DIR")
+        logger.info(f"SG:: 'saved_model_store_dir'=[{model_store_dir}]...")
 
         self.device = torch.device(
             "cuda:" + str(properties.get("gpu_id"))
@@ -54,7 +58,14 @@ class DiffusersHandler(BaseHandler, ABC):
         logger.info(f"SG:: Loaded [{model_id}] for this demo")
 
         self.pipe.to(self.device)
-        logger.info("Diffusion model from path %s loaded successfully", model_dir)
+        logger.info(f"SG:: Loaded [{model_id}] for this demo")
+
+        saved_model_dir = '/mnt/models/fine-tuned'
+        logger.info(f"SG:: Trying to load the previously saved model from [{saved_model_dir}] as the pre-trained model for this demo")
+        self.pipe = StableDiffusionXLPipeline.from_pretrained(saved_model_dir, torch_dtype=torch.float16, variant="fp16", use_safetensors=True)
+
+        self.pipe.to(self.device)
+        logger.info("Diffusion model from path %s loaded successfully", saved_model_dir)
 
         self.initialized = True
 
