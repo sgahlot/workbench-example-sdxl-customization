@@ -59,10 +59,10 @@ class DiffusersHandler(BaseHandler, ABC):
         self.pipe.to(self.device)
         logger.info(f"SG:: Loaded [{model_id}] for this demo")
 
-        logger.info(f"SG:: WIP - Loading LoRA weights for this model")
+        logger.info(f"SG:: Loading LoRA weights for this model")
         # TODO(SG): Uncomment to load LoRA weights once it's available and the model loads successfully 
-        # self.pipe.load_lora_weights(output_lora_dir)
-        logger.info(f"SG:: WIP - Loaded LoRA weights for this model")
+        self.pipe.load_lora_weights(model_dir + "/model")
+        logger.info(f"SG:: Loaded LoRA weights for this model")
 
         self.initialized = True
 
