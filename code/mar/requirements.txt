@@ -12,3 +12,4 @@ scipy
 fire
 gradio
 numpy
+peft==0.9.0
