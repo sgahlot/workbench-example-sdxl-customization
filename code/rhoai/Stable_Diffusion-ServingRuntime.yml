@@ -1,0 +1,38 @@
+apiVersion: serving.kserve.io/v1alpha1
+kind: ServingRuntime
+labels:
+  opendatahub.io/dashboard: "true"
+metadata:
+  name: stable-diffusion-custom
+  annotations:
+    opendatahub.io/recommended-accelerators: '["nvidia.com/gpu"]'
+spec:
+  builtInAdapter:
+    modelLoadingTimeoutMillis: 90000
+  supportedModelFormats:
+    - name: sdxl
+      autoSelect: true
+    - name: pytorch
+      version: "1"
+  multiModel: false
+  containers:
+    - name: kserve-container
+      image: quay.io/sgahlot/stable-diffusion-igm:0.5
+      args:
+        - --model_id
+        - stabilityai/stable-diffusion-xl-base-1.0
+        - --lora_dir
+        - /mnt/models/lora
+      env:
+        - name: model_id
+          value: stabilityai/stable-diffusion-xl-base-1.0
+        - name: model_location
+          value: /mnt/models/fine-tuned
+        - name: model_lora_weights_location
+          value: /mnt/models/lora
+      volumeMounts:
+        - mountPath: /dev/shm
+          name: shm
+      ports:
+        - containerPort: 8080
+          protocol: TCP
