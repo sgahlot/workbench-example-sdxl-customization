@@ -36,6 +36,19 @@ Once MinIO is setup, you can access it within your project. The yaml that was ap
 * `minio-api` - for API access to MinIO
   * Take note of the `minio-api` route location as that will be needed in next section.
 
+### Add Serving runtime
+You can either build the Serving runtime, from [igm-repo](./igm-repo/) by following the instructions provided there, or use the existing yaml for adding the serving runtime for deploying the model generated in this project.
+
+Follow these steps to use the existing yaml:
+* Expand `Settings` sidebar menu in RHOAI
+* Click on `Serving runtimes` in the expanded sidebar menu
+* Click on `Add serving runtime` button
+* Use the following values in the `Add serving runtime` page:
+  * _Select the model serving platforms this runtime supports_: `Single-model serving platform`
+  * _Select the API protocol this runtime supports_: `REST`
+  * _YAML_: Drag & drop [Stable_Diffusion-ServingRuntime yaml](./Stable_Diffusion-ServingRuntime.yml) file or paste the contents of this file after selecting `Start from scratch` option
+* Click on `Create` button to create this new Serving runtime
+
 ### Create workbench
 To use RHOAI for this project, we need to create a workbench first. In the newly created data science project, create a new Workbench by clicking `Create workbench` button in the `Workbenches` tab.
 
@@ -45,7 +58,7 @@ When creating the workbench, add the following environment variables:
 * AWS_SECRET_ACCESS_KEY
   * MinIO password
 * AWS_S3_ENDPOINT
-  * This is `minio-api` route location
+  * This is `minio-api` route location but without transfer protocol (no `https://` or `http://`)
 * AWS_S3_BUCKET
   * This bucket will be created later on and the LoRA weights will be uploaded to this bucket
 * AWS_DEFAULT_REGION
@@ -76,29 +89,34 @@ _The notebook mentioned in this section is used to take the base model and fine-
 
 * Once the workbench opens up in a new tab, select the folder where you cloned the repository and navigate to `code/rhoai` directory and open up the [main Jupyter Notebook](./FineTuning-SDXL.ipynb)
 * Run this notebook by selecting `Run` -> `Run All Cells` menu item
-* _When the notebook successfully runs, your fine-tuned model should have been uploaded to MinIO in the bucket mentioned in `Create Workbench` section_.
-
+* _When the notebook successfully runs, your fine-tuned model should have been uploaded to MinIO in the bucket specified for `AWS_S3_BUCKET` in `Create Workbench` section_.
 
 ### Create Data connection
 Create a new data connection that can be used by the init-container (`storage-initializer`) to fetch the LoRA weights generated in next step when deploying the model.
 
 To create a Data connection, use the following steps:
 * Click on `Add data connection` button in the  `Data connections` tab in your newly created project
-* Fill in all the fields for this data connection
+* Use the following values for this data connection:
+  * _Name_: `minio`
+  * _Access key_: value specified for `AWS_ACCESS_KEY_ID` field in `Create Workbench` section
+  * _Secret key_: value specified for `AWS_SECRET_ACCESS_KEY` field in `Create Workbench` section
+  * _Endpoint_: This is `minio-api` route location (_including the transfer protocol_ - `https://`)
+  * _Access key_: value specified for `AWS_DEFAULT_REGION` field in `Create Workbench` section
+  * _Bucket_: value specified for `AWS_S3_BUCKET` field in `Create Workbench` section
 * Create the data connection by clicking on `Add data connection` button
 
 ### Deploy model
 Once the initial notebook has run successfully and the data connection is created, you can deploy the model by following these steps:
 * Click on `Deploy model` button in the  `Models` tab in your newly created project
 * Fill in the following fields as described below:
-  * _Model name:_ **<PROVIDE_a_name_for_the_model>**
-  * _Serving runtime:_ **Stable Diffusion**
-  * _Model framework:_ **sdxl**
-  * _Model server size:_ **Small**
-  * _Accelerator:_ **NVIDIA GPU**
-  * _Model location:_ Select **Existing data connection** option
-    * _Name:_ **Name of data connection created in previous step**
-    * _Path:_ **model**
+  * _Model name_: **<PROVIDE_a_name_for_the_model>**
+  * _Serving runtime_: **Stable Diffusion**
+  * _Model framework_: **sdxl**
+  * _Model server size_: **Small**
+  * _Accelerator_: **NVIDIA GPU**
+  * _Model location_: Select **Existing data connection** option
+    * _Name_: **Name of data connection created in previous step**
+    * _Path_: **model**
 * Click on `Deploy` to deploy this model
 
 Copy the `infernece endpoint` once the model is deployed successfully (_it will take a few minutes to deploy the model_).
@@ -135,4 +153,5 @@ Even though we used the latest version for all the modules we installed for this
 The following notebooks contain output to give you an idea on how the outputs will look when the notebooks are run:
 * [FineTuning-SDXL-01](./more_notebooks/FineTuning-SDXL-with_output.ipynb)
 * [FineTuning-SDXL-02](./more_notebooks/FineTuning-SDXL-with_output-02.ipynb)
-* [GenerateImageUsingModel](./more_notebooks/GenerateImageUsingModel-with_output.ipynb)
+* [GenerateImageUsingModel-01](./more_notebooks/GenerateImageUsingModel-with_output-01.ipynb)
+* [GenerateImageUsingModel-02](./more_notebooks/GenerateImageUsingModel-with_output-02.ipynb)
