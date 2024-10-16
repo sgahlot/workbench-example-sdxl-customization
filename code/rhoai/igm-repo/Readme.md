@@ -4,11 +4,33 @@ A custom runtime to deploy the [Stable Diffusion XL](https://huggingface.co/stab
 
 **This is a partial clone of https://github.com/rh-aiservices-bu/igm-on-openshift GitHub repository**
 
+_This codebase contains a simplified version of the above mentioned repo. It doesn't allow for refiner but does allow for loading **LoRA weights** that adds fine-tuning to the base model_
+
 ## Server - Container image
 
 This folder contains the server code, as well as the Containerfile to build a containerized image.
 
-It is based on the kserve and the diffusion frameworks, and supports using the base SDXL image only, or base+refiner. The models are loaded as `fp16`, from `safetensors` files.
+It is based on the kserve and the diffusion frameworks, and supports using the base SDXL image with already generated LoRA weights. The models are loaded as `fp16`, from `safetensors` files.
+
+### Build the image (optional)
+
+To build the image, using the Containerfile, use the following commands:
+```
+podman build --platform=linux/amd64 -t <IMAGE_NAME>:<VERSION>
+
+e.g. podman build --platform=linux/amd64 -t quay.io/sgahlot/stable-diffusion-igm:1.0
+```
+
+Once the image is successfully built, use the following command to push the image to the registry:
+```
+podman push <IMAGE_NAME>:<VERSION>
+
+e.g. podman push quay.io/sgahlot/stable-diffusion-igm:1.0
+```
+
+
+**NOTE**: _The following image can be used in custom ServingRuntime: `quay.io/sgahlot/stable-diffusion-igm:1.0` if one does not want to build the image._
+
 
 ### Parameters
 
@@ -25,8 +47,11 @@ The parameters you can pass as arguments to the script (or container image) are:
 
 ### Examples
 
-This folder contains two example files on how to launch the server:
+The folder `kserve-sdxl-container` contains two example files on how to launch the server:
 
 - `start-base.sh`: starts the server with the base model only, saved as a single file. CPU offloading is set to `enable_model_cpu_offload` to allow running on 8GB of VRAM.
 - `start-refiner.sh`: starts the server with base+refiner models, both saved as singles files. CPU offloading is set to `enable_sequential_cpu_offload` to allow running on  8GB of VRAM (much less consumed, with longer inference time).
 
+## Clients examples
+
+Examples to use the inference point either with the base model only or the base+refiner are available in the notebook [kserve-sdxl-client-examples.ipynb](./kserve-sdxl-client-examples.ipynb).
