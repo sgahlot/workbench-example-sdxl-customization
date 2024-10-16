@@ -10,6 +10,7 @@ spec:
     requests:
       storage: 20Gi
   volumeMode: Filesystem
+
 ---
 kind: Secret
 apiVersion: v1
@@ -18,8 +19,9 @@ metadata:
 stringData:
   # change the username and password to your own values.
   # ensure that the user is at least 3 characters long and the password at least 8
-  minio_root_user: CHANGE_ME_USER
-  minio_root_password: CHANGE_ME_PASSWORD
+  minio_root_user: "$MINIO_USER"
+  minio_root_password: "$MINIO_PASSWORD"
+
 ---
 kind: Deployment
 apiVersion: apps/v1
