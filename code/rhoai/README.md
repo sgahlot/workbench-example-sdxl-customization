@@ -151,7 +151,7 @@ Even though we used the latest version for all the modules we installed for this
 
 ## More notebooks
 The following notebooks contain output to give you an idea on how the outputs will look when the notebooks are run:
-* [FineTuning-SDXL-01](./more_notebooks/FineTuning-SDXL-with_output.ipynb)
+* [FineTuning-SDXL-01](./more_notebooks/FineTuning-SDXL-with_output-01.ipynb)
 * [FineTuning-SDXL-02](./more_notebooks/FineTuning-SDXL-with_output-02.ipynb)
 * [GenerateImageUsingModel-01](./more_notebooks/GenerateImageUsingModel-with_output-01.ipynb)
 * [GenerateImageUsingModel-02](./more_notebooks/GenerateImageUsingModel-with_output-02.ipynb)
