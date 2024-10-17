@@ -1,15 +1,22 @@
 # Stable Diffusion XL in Red Hat OpenShift AI
 
-This readme shows how to fine-tune a [Stable Diffusion XL model](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) in [Red Hat OpenShift AI (RHOAI)](https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai) along with the steps to fine-tune the model. 
+This readme shows how to serve a [Stable Diffusion XL model](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0) in [Red Hat OpenShift AI (RHOAI)](https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai) along with the steps to fine-tune the model.
 
 This project takes the latest SDXL model and familiarizes it with Toy Jensen via finetuning on a few pictures, thereby teaching it to generate new images which include him when it didn't recognize him previously.
 
 Once the model is fine-tuned we will show the steps to deploy the model in RHOAI as well as to access the deployed model to generate the image.
 
 
+## Prerequisites
+
+Before we can fine-tune and serve a model in Red Hat OpenShift AI, we will need to install RHOAI and enable NVIDIA GPU by following these links:
+* [Red Hat OpenShift AI installation](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.13/html-single/installing_and_uninstalling_openshift_ai_self-managed/index#installing-and-deploying-openshift-ai_install)
+* [Enable NVIDIA GPU](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.13/html/installing_and_uninstalling_openshift_ai_self-managed/enabling-nvidia-gpus_install#enabling-nvidia-gpus_install)
+
+
 ## Quickstart
 
-Open up `Red Hat OpenShift AI` by selecting it from OpenShift Applicatin Launcher. This will open up Red Hat OpenShift AI in a new tab.
+Open up `Red Hat OpenShift AI` by selecting it from OpenShift Application Launcher. This will open up Red Hat OpenShift AI in a new tab.
 
 ### Create Data Science project
 Select Data Science Projects in the left navigation menu.
@@ -18,6 +25,9 @@ Create a new Data Science project by clicking on `Create data science project` b
 Provide the `Name` as well as the `Resource name` for the project, and click on `Create` button. This will create a new data science project for you.
 
 Select your newly created project by clicking on it.
+
+Here's a gif showing `Create Project` windows:
+![Create Project gif](./assets/create_project.gif)
 
 ### Setup MinIO
 This project uses `MinIO` for storing the LoRA weights generated while fine-tuning the base image.
@@ -37,7 +47,7 @@ Once MinIO is setup, you can access it within your project. The yaml that was ap
   * Take note of the `minio-api` route location as that will be needed in next section.
 
 ### Add Serving runtime
-You can either build the Serving runtime, from [igm-repo](./igm-repo/) by following the instructions provided there, or use the existing yaml for adding the serving runtime for deploying the model generated in this project.
+You can either build the Serving runtime, from [igm-repo](./igm-repo/) sub-directory by following the instructions provided there, or use the existing yaml for adding the serving runtime for deploying the model generated in this project.
 
 Follow these steps to use the existing yaml:
 * Expand `Settings` sidebar menu in RHOAI
@@ -48,6 +58,12 @@ Follow these steps to use the existing yaml:
   * _Select the API protocol this runtime supports_: `REST`
   * _YAML_: Drag & drop [Stable_Diffusion-ServingRuntime yaml](./Stable_Diffusion-ServingRuntime.yml) file or paste the contents of this file after selecting `Start from scratch` option
 * Click on `Create` button to create this new Serving runtime
+
+_You can read more about Model serving [here](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2-latest/html/serving_models/about-model-serving_about-model-serving)_
+
+Here's a gif showing the `Add serving runtime`:
+
+![Add serving runtime gif](./assets/create_serving_runtime.gif)
 
 ### Create workbench
 To use RHOAI for this project, we need to create a workbench first. In the newly created data science project, create a new Workbench by clicking `Create workbench` button in the `Workbenches` tab.
@@ -64,7 +80,7 @@ When creating the workbench, add the following environment variables:
 * AWS_DEFAULT_REGION
   * Set it to us-east-1
 
-  _The environment variables can be added one by one, or all together by using a secret yaml file_
+  _The environment variables can be added one by one, or all together by uploading a secret yaml file_
 
 Use the following values for other fields:
 * _Notebook image_:
@@ -78,18 +94,31 @@ Use the following values for other fields:
 
 Create the workbench with above settings.
 
+Here's a gif showing the various sections of `Create Workbench`:
+
+![Create Workbench gif](./assets/create_workbench.gif)
+
 ### Open workbench
 Now that the workbench is created and running, follow these steps to setup the project:
 * Open the workbench by clicking on the Open link for the workbench created, in the Workbenches tab
+* The workbench will open up in a new tab
+* _When the workbench is opened for the first time, you will be shown an `Authorize Access` page._
+  * _Click `Allow selected permissions` button in this page._
 * In the workbench, click on `Terminal` icon in the `Launcher` tab.
-* Clone this repository in the `Terminal`
+* Clone this repository in the `Terminal` by running the following command:  
+  `git clone https://github.com/sgahlot/workbench-example-sdxl-customization.git`
+
+Here's a gif showing `Open workbench`:
+
+![Open workbench gif](./assets/open_workbench.gif)
 
 ### Run Jupyter notebook
 _The notebook mentioned in this section is used to take the base model and fine-tune it to generate LoRA weights that are used later on to generate toy-jensen image_
 
-* Once the workbench opens up in a new tab, select the folder where you cloned the repository and navigate to `code/rhoai` directory and open up the [main Jupyter Notebook](./FineTuning-SDXL.ipynb)
+* Once the repository is cloned, select the folder where you cloned the repository (in the sidebar) and navigate to `code/rhoai` directory and open up [FineTuning-SDXL.ipynb](./FineTuning-SDXL.ipynb)
 * Run this notebook by selecting `Run` -> `Run All Cells` menu item
 * _When the notebook successfully runs, your fine-tuned model should have been uploaded to MinIO in the bucket specified for `AWS_S3_BUCKET` in `Create Workbench` section_.
+
 
 ### Create Data connection
 Create a new data connection that can be used by the init-container (`storage-initializer`) to fetch the LoRA weights generated in next step when deploying the model.
@@ -105,6 +134,11 @@ To create a Data connection, use the following steps:
   * _Bucket_: value specified for `AWS_S3_BUCKET` field in `Create Workbench` section
 * Create the data connection by clicking on `Add data connection` button
 
+Here's a gif showing the `Add data connection`:
+
+![Add data connecction gif](./assets/create_data_connection.gif)
+
+
 ### Deploy model
 Once the initial notebook has run successfully and the data connection is created, you can deploy the model by following these steps:
 * Click on `Deploy model` button in the  `Models` tab in your newly created project
@@ -119,12 +153,12 @@ Once the initial notebook has run successfully and the data connection is create
     * _Path_: **model**
 * Click on `Deploy` to deploy this model
 
-Copy the `infernece endpoint` once the model is deployed successfully (_it will take a few minutes to deploy the model_).
+Copy the `inference endpoint` once the model is deployed successfully (_it will take a few minutes to deploy the model_).
 
 ### Generate image
 A toy-jensen image can now be generated, using the deployed model. To generate and retrieve the image, use the following steps:
-* Open up [this Jupyter Notebook](./GenerateImageUsingModel.ipynb)
-* Set the value of `inference_endpoint` variable correctly by pointing it to your model's infernece endpoint
+* Open up [GenerateImageUsingModel.ipynb](./GenerateImageUsingModel.ipynb)
+* Set the value of `inference_endpoint` variable correctly by pointing it to your model's inference endpoint
   * _Your model `inference endpoint` should have been copied in the previous section_
 * Run this notebook by selecting `Run` -> `Run All Cells` menu item
 * _When the notebook successfully runs, you should see a toy-jensen image generated in the last cell_.
@@ -149,9 +183,17 @@ Even though we used the latest version for all the modules we installed for this
 * torch: `2.2.2+cu121`
 * torchvision: `0.17.2+cu121`
 
-## More notebooks
+## Notebooks with output
 The following notebooks contain output to give you an idea on how the outputs will look when the notebooks are run:
 * [FineTuning-SDXL-01](./more_notebooks/FineTuning-SDXL-with_output-01.ipynb)
 * [FineTuning-SDXL-02](./more_notebooks/FineTuning-SDXL-with_output-02.ipynb)
 * [GenerateImageUsingModel-01](./more_notebooks/GenerateImageUsingModel-with_output-01.ipynb)
 * [GenerateImageUsingModel-02](./more_notebooks/GenerateImageUsingModel-with_output-02.ipynb)
+
+
+## Links
+* [Red Hat OpenShift AI installation](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.13/html-single/installing_and_uninstalling_openshift_ai_self-managed/index#installing-and-deploying-openshift-ai_install)
+* [About Model serving](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2-latest/html/serving_models/about-model-serving_about-model-serving)
+* [Enable NVIDIA GPU](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.13/html/installing_and_uninstalling_openshift_ai_self-managed/enabling-nvidia-gpus_install#enabling-nvidia-gpus_install)
+* [Image Generation Models on OpenShift](https://github.com/rh-aiservices-bu/igm-on-openshift)
+* [Stable Diffusion XL model](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0)
