@@ -26,7 +26,7 @@ Provide the `Name` as well as the `Resource name` for the project, and click on 
 
 Select your newly created project by clicking on it.
 
-Here's a gif showing `Create Project` windows:
+Below is a gif showing `Create data science project` dialogs:
 ![Create Project gif](./assets/create_project.gif)
 
 ### Setup MinIO
@@ -61,8 +61,7 @@ Follow these steps to use the existing yaml:
 
 _You can read more about Model serving [here](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2-latest/html/serving_models/about-model-serving_about-model-serving)_
 
-Here's a gif showing the `Add serving runtime`:
-
+Below is a gif showing fields on `Add serving runtime` page:
 ![Add serving runtime gif](./assets/create_serving_runtime.gif)
 
 ### Create workbench
@@ -94,8 +93,7 @@ Use the following values for other fields:
 
 Create the workbench with above settings.
 
-Here's a gif showing the various sections of `Create Workbench`:
-
+Below is a gif showing various sections of `Create Workbench`:
 ![Create Workbench gif](./assets/create_workbench.gif)
 
 ### Open workbench
@@ -108,8 +106,7 @@ Now that the workbench is created and running, follow these steps to setup the p
 * Clone this repository in the `Terminal` by running the following command:  
   `git clone https://github.com/sgahlot/workbench-example-sdxl-customization.git`
 
-Here's a gif showing `Open workbench`:
-
+Below is a gif showing `Open workbench` pages:
 ![Open workbench gif](./assets/open_workbench.gif)
 
 ### Run Jupyter notebook
@@ -134,8 +131,7 @@ To create a Data connection, use the following steps:
   * _Bucket_: value specified for `AWS_S3_BUCKET` field in `Create Workbench` section
 * Create the data connection by clicking on `Add data connection` button
 
-Here's a gif showing the `Add data connection`:
-
+Below is a gif showing the `Add data connection` dialog:
 ![Add data connecction gif](./assets/create_data_connection.gif)
 
 
