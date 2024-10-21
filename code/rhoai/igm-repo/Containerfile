@@ -82,7 +82,7 @@ WORKDIR $SRC_PATH
 
 ###############################################################################################
 # SG: needed to use "root" to create and set permissions otherwise we get the following error #
-#     in OpenShift                                                                            #
+#     in OpenShift due to securityContextConstraints                                          #
 #                                                                                             #
 # PermissionError: [Errno 13] Permission denied: '/opt/app-root/src/.cache/huggingface'       #
 ###############################################################################################
