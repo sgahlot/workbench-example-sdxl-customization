@@ -91,9 +91,9 @@ When creating the workbench, add the following environment variables:
     that is in the format of `https://s3.<REGION>.amazonaws.com`
 * AWS_S3_BUCKET
   * This bucket should _either be existing or will be created_ by one of the
-    Jupyter notebooks to upload the LoRA weights. **_If using `AWS S3` and the
-    bucket does not exist, make sure correct permissions are assigned to the
-    IAM user to be able to create the bucket_**
+    Jupyter notebooks to upload the LoRA weights.
+  * **_If using `AWS S3` and the bucket does not exist, make sure correct permissions
+    are assigned to the IAM user to be able to create the bucket_**
 * AWS_DEFAULT_REGION
   * Set it to us-east-1 if using `MinIO` otherwise use the correct `AWS` region
 
