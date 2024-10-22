@@ -38,7 +38,7 @@ Below is a gif showing `Create data science project` dialogs:
 ![Create Project gif](./assets/create_project.gif)
 
 
-### Setup LoRA upload appraoch
+### Setup LoRA upload approach
 The LoRA weights that are generated while fine-tuning the base image need to be uploaded to either AWS S3 or MinIO so that they are available to the model when the model is deployed.
 
 
