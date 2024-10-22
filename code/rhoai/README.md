@@ -70,7 +70,7 @@ To setup AWS S3, for storing the LoRA weights, setup the following:
   * `s3:*Object`
   * `s3:ListAllMyBuckets`
   * `s3:CreateBucket`
-    * **This permission is ONLY needed if the bucket is not already created**
+    * **This permission is ONLY needed if you want bucket to be created by the notebook**
 * For the above permissions, set `Resource` to:
   * `arn:aws:s3:::*`
   * _If an already existing bucket is used, then the `Resource` can be set to the specific bucket, e.g._
@@ -93,7 +93,7 @@ When creating the workbench, add the following environment variables:
   * This bucket should _either be existing or will be created_ by one of the
     Jupyter notebooks to upload the LoRA weights.
   * **_If using `AWS S3` and the bucket does not exist, make sure correct permissions
-    are assigned to the IAM user to be able to create the bucket_**
+    are assigned to the IAM user to be able to create the bucket, as shown [here](#setup-aws-s3)_**
 * AWS_DEFAULT_REGION
   * Set it to us-east-1 if using `MinIO` otherwise use the correct `AWS` region
 
