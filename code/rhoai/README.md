@@ -83,13 +83,17 @@ To use RHOAI for this project, you need to create a workbench first. In the newl
 
 When creating the workbench, add the following environment variables:
 * AWS_ACCESS_KEY_ID
-  * MinIO user name
+  * MinIO user name if using `MinIO` else use `AWS` credentials
 * AWS_SECRET_ACCESS_KEY
-  * MinIO password
+  * MinIO password if using `MinIO` else use `AWS` credentials
 * AWS_S3_ENDPOINT
-  * This is `minio-api` route location (**_if using MinIO for uploads_**)
+  * `minio-api` route location if using `MinIO` else use `AWS S3` endpoint
+    that is in the format of `https://s3.<REGION>.amazonaws.com`
 * AWS_S3_BUCKET
-  * This bucket will be created later on and the LoRA weights will be uploaded to this bucket
+  * This bucket should _either be existing or will be created_ by one of the
+    Jupyter notebooks to upload the LoRA weights. **_If using `AWS S3` and the
+    bucket does not exist, make sure correct permissions are assigned to the
+    IAM user to be able to create the bucket_**
 * AWS_DEFAULT_REGION
   * Set it to us-east-1 if using `MinIO` otherwise use the correct `AWS` region
 
