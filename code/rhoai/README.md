@@ -13,7 +13,11 @@ Before you can fine-tune and serve a model in Red Hat OpenShift AI, you will nee
 * [Red Hat OpenShift AI installation](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.13/html-single/installing_and_uninstalling_openshift_ai_self-managed/index#installing-and-deploying-openshift-ai_install)
 * [Enable NVIDIA GPU](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.13/html/installing_and_uninstalling_openshift_ai_self-managed/enabling-nvidia-gpus_install#enabling-nvidia-gpus_install)
 
-_You will need to install the `oc` client if using MinIO for model storage_
+This project generates [LoRA](https://huggingface.co/papers/2106.09685) (_Low-Rank Adaptation of Large Language Models_) weights when the base model is fine-tuned. These weights are uploaded to either:
+* `MinIO` or
+  * _Install the `oc` client if using MinIO for model storage_
+* `AWS S3`
+  * Setup IAM user/credentials/permissions to create the bucket as well as to upload the objects when using this appraoch
 
 
 ## Quickstart
@@ -33,10 +37,12 @@ Below is a gif showing `Create data science project` dialogs:
 ![Create Project gif](./assets/create_project.gif)
 
 
-### Setup MinIO
-This project uses `MinIO` for storing the LoRA weights generated while fine-tuning the base image.
+### Setup LoRA upload appraoch
+The LoRA weights that are generated while fine-tuning the base image need to be uploaded to either AWS S3 or MinIO so that they are available to the model when the model is deployed.
 
-To setup MinIO execute the following commands, in a terminal/console:
+
+#### Setup MinIO
+To setup MinIO, for storing the LoRA weights, execute the following commands in a terminal/console:
 ```
 # Login to OpenShift (if not already logged in)
 oc login --token=<OCP_TOKEN>
@@ -55,6 +61,22 @@ Once MinIO is setup, you can access it within your project. The yaml that was ap
   * Take note of the `minio-api` route location as that will be needed in next section.
 
 
+#### Setup AWS S3
+To setup AWS S3, for storing the LoRA weights, setup the following:
+* Create IAM user
+* Add following permissions to the user, with the `Effect: "Allow"`:
+  * `s3:ListBucket`
+  * `s3:*Object`
+  * `s3:ListAllMyBuckets`
+  * `s3:CreateBucket`
+    * **This permission is ONLY needed if the bucket is not already created**
+* For the above permissions, set `Resource` to:
+  * `arn:aws:s3:::*`
+  * _If an already existing bucket is used, then the `Resource` can be set to the specific bucket, e.g._
+    * `arn:aws:s3:::<EXISTING_BUCKET_NAME>`
+
+
+
 ### Create workbench
 To use RHOAI for this project, you need to create a workbench first. In the newly created data science project, create a new Workbench by clicking `Create workbench` button in the `Workbenches` tab.
 
@@ -64,11 +86,11 @@ When creating the workbench, add the following environment variables:
 * AWS_SECRET_ACCESS_KEY
   * MinIO password
 * AWS_S3_ENDPOINT
-  * This is `minio-api` route location but without transfer protocol (no `https://` or `http://`)
+  * This is `minio-api` route location (**_if using MinIO for uploads_**)
 * AWS_S3_BUCKET
   * This bucket will be created later on and the LoRA weights will be uploaded to this bucket
 * AWS_DEFAULT_REGION
-  * Set it to us-east-1
+  * Set it to us-east-1 if using `MinIO` otherwise use the correct `AWS` region
 
   _The environment variables can be added one by one, or all together by uploading a secret yaml file_
 
@@ -97,12 +119,12 @@ To create a Data connection, use the following steps:
   * _Name_: `minio`
   * _Access key_: value specified for `AWS_ACCESS_KEY_ID` field in `Create Workbench` section
   * _Secret key_: value specified for `AWS_SECRET_ACCESS_KEY` field in `Create Workbench` section
-  * _Endpoint_: This is `minio-api` route location (_including the transfer protocol_ - `https://`)
+  * _Endpoint_: value specified for `AWS_S3_ENDPOINT` field in `Create Workbench` section
   * _Access key_: value specified for `AWS_DEFAULT_REGION` field in `Create Workbench` section
   * _Bucket_: value specified for `AWS_S3_BUCKET` field in `Create Workbench` section
 * Create the data connection by clicking on `Add data connection` button
 
-Below is a gif showing the `Add data connection` dialog:
+Below is a gif showing the `Add data connection` dialog (_the values shown are for MinIO_):
 ![Add data connecction gif](./assets/create_data_connection.gif)
 
 
@@ -144,8 +166,10 @@ Below is a gif showing `Open workbench` pages:
 _The notebook mentioned in this section is used to take the base model and fine-tune it to generate LoRA weights that are used later on to generate toy-jensen image_
 
 * Once the repository is cloned, select the folder where you cloned the repository (in the sidebar) and navigate to `code/rhoai` directory and open up [FineTuning-SDXL.ipynb](./FineTuning-SDXL.ipynb)
+* **If `AWS S3` is used to store the LoRA weights, modify the last cell as shown below:**
+  * `XFER_LOCATION = 'MINIO'` - change it to `XFER_LOCATION = 'AWS'`
 * Run this notebook by selecting `Run` -> `Run All Cells` menu item
-* _When the notebook successfully runs, your fine-tuned model should have been uploaded to MinIO in the bucket specified for `AWS_S3_BUCKET` in `Create Workbench` section_.
+* _When the notebook successfully runs, your fine-tuned model should have been uploaded to AWS or MinIO in the bucket specified for `AWS_S3_BUCKET` in `Create Workbench` section_.
 
 
 ### Deploy model
@@ -184,6 +208,8 @@ A toy-jensen image can now be generated, using the deployed model. To generate a
 Even though the latest version is used for all the modules that are installed for this project, here are the versions that are used underneath (in case any version incompatibility occurs in future):
 
 * accelerate: `1.0.1`
+* boto3: `1.34.111`
+* botocore: `1.34.111`
 * dataclass_wizard: `0.23.0`
 * diffusers: `0.31.0.dev0`
 * ipywidgets: `8.1.2`
@@ -210,3 +236,4 @@ The following notebooks contain output to give you an idea on how the outputs wi
 * [Enable NVIDIA GPU](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.13/html/installing_and_uninstalling_openshift_ai_self-managed/enabling-nvidia-gpus_install#enabling-nvidia-gpus_install)
 * [Image Generation Models on OpenShift](https://github.com/rh-aiservices-bu/igm-on-openshift)
 * [Stable Diffusion XL model](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0)
+* [LoRA](https://huggingface.co/papers/2106.09685)
