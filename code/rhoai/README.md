@@ -13,11 +13,12 @@ Before you can fine-tune and serve a model in Red Hat OpenShift AI, you will nee
 * [Red Hat OpenShift AI installation](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.13/html-single/installing_and_uninstalling_openshift_ai_self-managed/index#installing-and-deploying-openshift-ai_install)
 * [Enable NVIDIA GPU](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.13/html/installing_and_uninstalling_openshift_ai_self-managed/enabling-nvidia-gpus_install#enabling-nvidia-gpus_install)
 
-This project generates [LoRA](https://huggingface.co/papers/2106.09685) (_Low-Rank Adaptation of Large Language Models_) weights when the base model is fine-tuned. These weights are uploaded to either:
-* `MinIO` or
-  * _Install the `oc` client if using MinIO for model storage_
-* `AWS S3`
-  * Setup IAM user/credentials/permissions to create the bucket as well as to upload the objects when using this appraoch
+This project generates [LoRA](https://huggingface.co/papers/2106.09685) (_Low-Rank Adaptation of Large Language Models_) weights when the base model is fine-tuned. These weights can be uploaded to one of the following:
+
+1. `MinIO`
+   * _Install the `oc` client if using MinIO for model storage_
+2. `AWS S3`
+   * Setup IAM user/credentials/permissions to create the bucket as well as to upload the objects when using this appraoch
 
 
 ## Quickstart
