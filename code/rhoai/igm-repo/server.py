@@ -1,8 +1,6 @@
 import argparse
 import base64
 import io
-import logging
-import os
 from typing import Dict, Union
 
 import torch
@@ -18,13 +16,8 @@ class DiffusersModel(Model):
         super().__init__(name)
         # print('In __init__')
 
-        tmp_model_id = os.environ.get('model_id')
-        tmp_model_location = os.environ.get('model_location')
-        tmp_model_lora_weights_location = os.environ.get('model_lora_weights_location')
-        # print(f'tmp_model_id={tmp_model_id}, tmp_model_location={tmp_model_location}, tmp_model_lora_weights_location={tmp_model_lora_weights_location}')
-
-        self.model_id = args.model_id or tmp_model_id or tmp_model_location or "/mnt/models"
-        self.lora_dir = args.lora_dir or tmp_model_lora_weights_location or None
+        self.model_id = args.model_id or "/mnt/models"
+        self.lora_dir = args.lora_dir or None
         self.pipeline = None
         self.ready = False
 
